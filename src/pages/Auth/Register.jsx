@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../services/firebase";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import "./auth.css";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -24,26 +25,43 @@ function Register() {
   };
 
   return (
-    <div className="container">
-      <h2 className="title">Register</h2>
+    <div className="auth-container">
+      <div className="auth-card">
+        <h2 className="auth-title">Create Account</h2>
+        <p className="auth-subtitle">Start tracking your job matches</p>
 
-      <form onSubmit={handleRegister} className="form">
-        <input
-          className="input"
-          type="email"
-          placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <form onSubmit={handleRegister} className="auth-form">
+          {/* Email */}
+          <div className="input-group">
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="Enter email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
 
-        <input
-          className="input"
-          type="password"
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          {/* Password */}
+          <div className="input-group">
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
 
-        <button className="btn add-btn">Register</button>
-      </form>
+          {/* Button */}
+          <button className="auth-btn">Register</button>
+        </form>
+
+        {/* Footer */}
+        <div className="auth-footer">
+          Already have an account? <Link to="/login">Login</Link>
+        </div>
+      </div>
     </div>
   );
 }
