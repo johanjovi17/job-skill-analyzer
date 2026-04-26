@@ -21,10 +21,6 @@ A web app that helps users analyze how well they match a job based on their skil
 
 Users select their skills → jobs have required skills → system compares both → shows match % and missing skills.
 
-## Screenshots
-
-(add 2–3 images)
-
 ## Live Demo
 
 (link after deployment)
