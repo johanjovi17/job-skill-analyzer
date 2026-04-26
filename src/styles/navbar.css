@@ -1,0 +1,85 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  background: #111827;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Logo */
+.logo {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* Links */
+.nav-links {
+  display: flex;
+  justify-content: space-between; /* spread evenly */
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 420px; /* controls spread */
+}
+
+/* Individual link */
+.nav-link {
+  color: #9ca3af;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 13px; /* smaller + cleaner */
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+}
+
+.nav-link.active {
+  color: #6366f1; /* softer indigo */
+}
+
+/* User section */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-name {
+  background: #1f2937;
+  padding: 5px 10px;
+  border-radius: 999px; /* pill shape */
+  font-size: 12px;
+  color: #d1d5db;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .nav-links {
+    width: 100%;
+    max-width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .nav-link {
+    font-size: 12px;
+  }
+
+  .user-info {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

@@ -1,0 +1,57 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+/* Page background */
+.page {
+  min-height: 100vh;
+  background: #f3f4f6;
+  padding: 40px 20px;
+}
+
+/* Container */
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Buttons (shared) */
+.btn {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  font-weight: 500;
+}
+
+.add-btn {
+  background: #4f46e5;
+  color: white;
+}
+
+.add-btn:hover {
+  background: #4338ca;
+}
+
+.edit-btn {
+  background: #f59e0b;
+  color: white;
+}
+
+.edit-btn:hover {
+  background: #d97706;
+}
+
+.delete-btn {
+  background: #ef4444;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #dc2626;
+}
