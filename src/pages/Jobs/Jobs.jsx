@@ -11,12 +11,16 @@ import { Link, useNavigate } from "react-router-dom";
 import "../../styles/jobs.css";
 import { useSkillMatch } from "../../hooks/useSkillMatch";
 import toast from "react-hot-toast";
+
+//components
 import Spinner from "../../components/Spinner";
+import Searchbar from "../../components/Searchbar";
 
 function Jobs() {
   const [jobs, setJobs] = useState([]);
   const [userSkills, setUserSkills] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchItem, setSearchItem] = useState("");
 
   const navigate = useNavigate();
   const jobsCollection = collection(db, "jobs");
@@ -42,6 +46,11 @@ function Jobs() {
 
     setJobs(jobsList);
   };
+
+  //searchbar logic
+  const filteredJobs = jobs.filter((job) =>
+    job.title.toLowerCase().includes(searchItem.toLowerCase()),
+  );
 
   const deleteJob = async (id) => {
     const jobDoc = doc(db, "jobs", id);
@@ -90,6 +99,8 @@ function Jobs() {
           </Link>
         </div>
 
+        <Searchbar searchItem={searchItem} setSearchItem={setSearchItem} />
+
         {jobs.length === 0 ? (
           <div className="empty-state">
             <p>No jobs yet</p>
@@ -97,7 +108,7 @@ function Jobs() {
           </div>
         ) : (
           <ul className="job-list">
-            {jobs.map((job) => {
+            {filteredJobs.map((job) => {
               const { missingSkills, matchPercent, matchLevel } = useSkillMatch(
                 userSkills,
                 job.requiredSkills,
