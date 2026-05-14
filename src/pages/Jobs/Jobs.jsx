@@ -108,72 +108,74 @@ function Jobs() {
           </div>
         ) : (
           <ul className="job-list">
-            {filteredJobs.map((job) => {
-              const { missingSkills, matchPercent, matchLevel } = useSkillMatch(
-                userSkills,
-                job.requiredSkills,
-              );
+            {filteredJobs.length === 0 ? (
+              <p>No matching jobs found</p>
+            ) : (
+              filteredJobs.map((job) => {
+                const { missingSkills, matchPercent, matchLevel } =
+                  useSkillMatch(userSkills, job.requiredSkills);
 
-              return (
-                <li className="job-card" key={job.id}>
-                  <div className="job-left">
-                    <span className="job-title">{job.title}</span>
+                return (
+                  <li className="job-card" key={job.id}>
+                    <div className="job-left">
+                      <span className="job-title">{job.title}</span>
 
-                    {/* Company + Location */}
-                    <div className="job-meta">
-                      {job.company || "Unknown Company"} •{" "}
-                      {job.location || "Unknown Location"}
+                      {/* Company + Location */}
+                      <div className="job-meta">
+                        {job.company || "Unknown Company"} •{" "}
+                        {job.location || "Unknown Location"}
+                      </div>
+
+                      {/* Description */}
+                      {job.description && (
+                        <div className="job-desc">
+                          {job.description.length > 100
+                            ? job.description.slice(0, 100) + "..."
+                            : job.description}
+                        </div>
+                      )}
+
+                      {/* Match */}
+                      <div className="match-section">
+                        <span className={`match-text ${matchLevel}`}>
+                          {Math.round(matchPercent)}% Match
+                        </span>
+
+                        <div className="progress-bar">
+                          <div
+                            className={`progress-fill ${matchLevel}`}
+                            style={{ width: `${matchPercent}%` }}
+                          ></div>
+                        </div>
+                      </div>
+
+                      {/* Missing */}
+                      {missingSkills.length > 0 && (
+                        <div className="missing-skills">
+                          Missing: {missingSkills.join(", ")}
+                        </div>
+                      )}
                     </div>
 
-                    {/* Description */}
-                    {job.description && (
-                      <div className="job-desc">
-                        {job.description.length > 100
-                          ? job.description.slice(0, 100) + "..."
-                          : job.description}
-                      </div>
-                    )}
+                    <div className="actions">
+                      <button
+                        className="btn edit-btn"
+                        onClick={() => navigate(`/edit/${job.id}`)}
+                      >
+                        Edit
+                      </button>
 
-                    {/* Match */}
-                    <div className="match-section">
-                      <span className={`match-text ${matchLevel}`}>
-                        {Math.round(matchPercent)}% Match
-                      </span>
-
-                      <div className="progress-bar">
-                        <div
-                          className={`progress-fill ${matchLevel}`}
-                          style={{ width: `${matchPercent}%` }}
-                        ></div>
-                      </div>
+                      <button
+                        className="btn delete-btn"
+                        onClick={() => deleteJob(job.id)}
+                      >
+                        Delete
+                      </button>
                     </div>
-
-                    {/* Missing */}
-                    {missingSkills.length > 0 && (
-                      <div className="missing-skills">
-                        Missing: {missingSkills.join(", ")}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="actions">
-                    <button
-                      className="btn edit-btn"
-                      onClick={() => navigate(`/edit/${job.id}`)}
-                    >
-                      Edit
-                    </button>
-
-                    <button
-                      className="btn delete-btn"
-                      onClick={() => deleteJob(job.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </li>
-              );
-            })}
+                  </li>
+                );
+              })
+            )}
           </ul>
         )}
       </div>
