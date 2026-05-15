@@ -16,14 +16,40 @@ import toast from "react-hot-toast";
 import Spinner from "../../components/Spinner";
 import Searchbar from "../../components/Searchbar";
 
+//constants
+const jobsPerPage = 4;
+
 function Jobs() {
   const [jobs, setJobs] = useState([]);
   const [userSkills, setUserSkills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchItem, setSearchItem] = useState("");
 
+  //searchbar logic
+  const filteredJobs = jobs.filter((job) =>
+    job.title.toLowerCase().includes(searchItem.toLowerCase()),
+  );
+
+  // PAGINATION
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Calculate indexes
+  const indexOfLastJob = currentPage * jobsPerPage;
+  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+
+  // Current jobs to display
+  const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
+
+  // Total pages
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+
   const navigate = useNavigate();
   const jobsCollection = collection(db, "jobs");
+
+  //useEffect
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchItem]);
 
   const fetchUserSkills = async () => {
     if (!auth.currentUser) return;
@@ -46,11 +72,6 @@ function Jobs() {
 
     setJobs(jobsList);
   };
-
-  //searchbar logic
-  const filteredJobs = jobs.filter((job) =>
-    job.title.toLowerCase().includes(searchItem.toLowerCase()),
-  );
 
   const deleteJob = async (id) => {
     const jobDoc = doc(db, "jobs", id);
@@ -107,76 +128,97 @@ function Jobs() {
             <span>Start by creating your first job 🚀</span>
           </div>
         ) : (
-          <ul className="job-list">
-            {filteredJobs.length === 0 ? (
-              <p>No matching jobs found</p>
-            ) : (
-              filteredJobs.map((job) => {
-                const { missingSkills, matchPercent, matchLevel } =
-                  useSkillMatch(userSkills, job.requiredSkills);
+          <>
+            <ul className="job-list">
+              {currentJobs.length === 0 ? (
+                <p>No matching jobs found</p>
+              ) : (
+                currentJobs.map((job) => {
+                  const { missingSkills, matchPercent, matchLevel } =
+                    useSkillMatch(userSkills, job.requiredSkills);
 
-                return (
-                  <li className="job-card" key={job.id}>
-                    <div className="job-left">
-                      <span className="job-title">{job.title}</span>
+                  return (
+                    <li className="job-card" key={job.id}>
+                      <div className="job-left">
+                        <span className="job-title">{job.title}</span>
 
-                      {/* Company + Location */}
-                      <div className="job-meta">
-                        {job.company || "Unknown Company"} •{" "}
-                        {job.location || "Unknown Location"}
+                        {/* Company + Location */}
+                        <div className="job-meta">
+                          {job.company || "Unknown Company"} •{" "}
+                          {job.location || "Unknown Location"}
+                        </div>
+
+                        {/* Description */}
+                        {job.description && (
+                          <div className="job-desc">
+                            {job.description.length > 100
+                              ? job.description.slice(0, 100) + "..."
+                              : job.description}
+                          </div>
+                        )}
+
+                        {/* Match */}
+                        <div className="match-section">
+                          <span className={`match-text ${matchLevel}`}>
+                            {Math.round(matchPercent)}% Match
+                          </span>
+
+                          <div className="progress-bar">
+                            <div
+                              className={`progress-fill ${matchLevel}`}
+                              style={{ width: `${matchPercent}%` }}
+                            ></div>
+                          </div>
+                        </div>
+
+                        {/* Missing */}
+                        {missingSkills.length > 0 && (
+                          <div className="missing-skills">
+                            Missing: {missingSkills.join(", ")}
+                          </div>
+                        )}
                       </div>
 
-                      {/* Description */}
-                      {job.description && (
-                        <div className="job-desc">
-                          {job.description.length > 100
-                            ? job.description.slice(0, 100) + "..."
-                            : job.description}
-                        </div>
-                      )}
+                      <div className="actions">
+                        <button
+                          className="btn edit-btn"
+                          onClick={() => navigate(`/edit/${job.id}`)}
+                        >
+                          Edit
+                        </button>
 
-                      {/* Match */}
-                      <div className="match-section">
-                        <span className={`match-text ${matchLevel}`}>
-                          {Math.round(matchPercent)}% Match
-                        </span>
-
-                        <div className="progress-bar">
-                          <div
-                            className={`progress-fill ${matchLevel}`}
-                            style={{ width: `${matchPercent}%` }}
-                          ></div>
-                        </div>
+                        <button
+                          className="btn delete-btn"
+                          onClick={() => deleteJob(job.id)}
+                        >
+                          Delete
+                        </button>
                       </div>
+                    </li>
+                  );
+                })
+              )}
+            </ul>
+            <div className="pagination">
+              <button
+                onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
+                disabled={currentPage === 1}
+              >
+                Prev
+              </button>
 
-                      {/* Missing */}
-                      {missingSkills.length > 0 && (
-                        <div className="missing-skills">
-                          Missing: {missingSkills.join(", ")}
-                        </div>
-                      )}
-                    </div>
+              <span>
+                Page {currentPage} of {totalPages}
+              </span>
 
-                    <div className="actions">
-                      <button
-                        className="btn edit-btn"
-                        onClick={() => navigate(`/edit/${job.id}`)}
-                      >
-                        Edit
-                      </button>
-
-                      <button
-                        className="btn delete-btn"
-                        onClick={() => deleteJob(job.id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </li>
-                );
-              })
-            )}
-          </ul>
+              <button
+                onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </div>
+          </>
         )}
       </div>
     </div>
