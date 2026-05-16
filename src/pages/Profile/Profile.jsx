@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { db, auth } from "../../services/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import "../../styles/profile.css";
 import { SKILLS } from "../../constants/skills";
 import Spinner from "../../components/Spinner";
@@ -9,6 +9,27 @@ function Profile() {
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // useEffects
+  useEffect(() => {
+    const fetchSkills = async () => {
+      if (!auth.currentUser) return;
+
+      try {
+        const docRef = doc(db, "users", auth.currentUser.uid);
+
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setSelectedSkills(docSnap.data().skills || []);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchSkills();
+  }, []);
 
   const handleSkillChange = (skill) => {
     if (selectedSkills.includes(skill)) {
